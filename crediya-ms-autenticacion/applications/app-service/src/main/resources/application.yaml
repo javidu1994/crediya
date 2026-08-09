@@ -1,0 +1,82 @@
+server:
+  port: ${APP_PORT}
+spring:
+  application:
+    name: "crediya-ms-autenticacion"
+  devtools:
+    add-properties: false
+  h2:
+    console:
+      enabled: true
+      path: "/h2"
+  profiles:
+    include: null
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "https://idp.example.com/issuer"
+          client-id: "myclientid"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
+springdoc:
+  swagger-ui:
+    path: "/crediya-ms-autenticacion/swagger-ui.html"
+  api-docs:
+    path: "/api/doc/api-docs"
+routes:
+  paths:
+    users: "/api/v1/users"
+    users-exist: "/exist"
+    auth: "/api/v1/auth"
+    auth-login: "/login"
+adapters:
+  r2dbc:
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    database: ${DB_NAME}
+    schema: "public"
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    pool:
+      initial-size: 12
+      max-size: 15
+      max-idle-time: 10
+    #DB Local
+    #username: "postgres"
+    #password: "javidu"
+    #database: "autenticacion"
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          reactive: "DEBUG"
+          server: "DEBUG"
+        r2dbc: "DEBUG"
+        data:
+          r2dbc: "DEBUG"
+        security: "DEBUG"
+        oauth2: "DEBUG"
+    io:
+      r2dbc:
+        postgresql:
+          PARAM: "DEBUG"
+        spi: "DEBUG"
+    reactor.netty.http.server: "DEBUG"
+    reactor.netty.http.client: "DEBUG"
+    co:
+      com:
+        pragma:
+          autenticacion: "DEBUG"
+jwt:
+  json-exp-roles: "/roles"
