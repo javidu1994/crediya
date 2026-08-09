@@ -1,0 +1,1 @@
+Este repositorio consta de 2 microservicios, un archivo .env y docker-compose global que comparten servicios y variables globales para docker, si se desea usar como repositorios independientes, se debe adicionar un docker-compose para cada microservicio.
