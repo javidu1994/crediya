@@ -1,0 +1,117 @@
+server:
+  port: ${APP_PORT}
+spring:
+  application:
+    name: "crediya-ms-solicitudes"
+  devtools:
+    add-properties: false
+  h2:
+    console:
+      enabled: true
+      path: "/h2"
+  profiles:
+    include: null
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # URL del micro de autenticación que emite los tokens
+          issuer-uri: ${AUTH_ISSUER_URI}
+          # O directamente el endpoint de las llaves públicas
+          #jwk-set-uri: http://auth-service:8080/oauth2/jwks
+          #jwk-set-uri: http://localhost:8080/realms/myrealm/protocol/openid-connect/certs
+springdoc:
+  swagger-ui.path: "/crediya-ms-solicitudes/swagger-ui.html"
+  api-docs.path: "/v3/api-docs"
+  show-actuator: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    circuitbreakers:
+      enabled: true
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
+routes:
+  paths:
+    loans: "/api/v1/loans"
+    loans-by-id: "/{id}"
+    loans-full: "/full"
+    loans-paginated: "/paginated"
+    states: "/api/v1/states"
+    states-by-id: "/{id}"
+    states-by-name: "/name/{name}"
+    types-loan: "/api/v1/typesloan"
+    types-loan-by-id: "/{id}"
+    types-loan-by-name: "/name/{name}"
+adapters:
+  r2dbc:
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    database: ${DB_NAME}
+    schema: "public"
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    pool:
+      initial-size: 12
+      max-size: 15
+      max-idle-time: 10
+    #DB Local
+    #username: "postgres"
+    #password: "javidu"
+    #database: "loans"
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          reactive: "DEBUG"
+          server: "DEBUG"
+        r2dbc: "DEBUG"
+        data:
+          r2dbc: "DEBUG"
+        security: "DEBUG"
+        oauth2: "DEBUG"
+    io:
+      r2dbc:
+        postgresql:
+          PARAM: "DEBUG"
+        spi: "DEBUG"
+    reactor.netty.http.server: "DEBUG"
+    co:
+      com:
+        pragma:
+          solicitudes: "DEBUG"
+adapter:
+  restconsumer:
+    timeout: 5000
+    url: ${AUTH_SERVICE_URL}
+resilience4j:
+  circuitbreaker:
+    instances:
+      testGet:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: "2s"
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: "10s"
+      testPost:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: "2s"
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: "10s"
+jwt:
+  secret: "41bf3e34437dccd8343c8afdc10c62c149b9042f66d726d2f3542557b6c0dd33"
